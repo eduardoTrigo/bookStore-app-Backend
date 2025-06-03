@@ -4,6 +4,7 @@ const { default: mongoose } = require('mongoose')
 const { EXPRESS_CONFIG, MONGO_CONFIG } = require('./config')
 const authorRouter = require('./routes/author.routes')
 const bookRouter = require('./routes/book.routes')
+const userRouter = require('./routes/user.router')
 
 
 const app = express()
@@ -13,6 +14,7 @@ app.use(morgan('dev'))
 
 app.use('/authors', authorRouter)
 app.use('/books', bookRouter)
+app.use('/users', userRouter)
 
 mongoose.connect(MONGO_CONFIG.URI)
     .then(()=>console.log({message:'base de datos conectada'}))
