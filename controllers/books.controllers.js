@@ -11,7 +11,7 @@ const getBooks = async (req, res, next) => {
         }
         const response = await query.exec()
         res.status(200)
-        req.json(response)
+        res.json(response)
     } catch (error) {
         next(error)
     }
@@ -19,8 +19,8 @@ const getBooks = async (req, res, next) => {
 
 const createBook = async (req, res, next) => {
     try {
-        const { title, description, authorId } = req.body
-        const book = new Books({ title, description, authorId })
+        const { title, description, authorId, price, stock, available } = req.body
+        const book = new Books({ title, description, authorId, price, stock, available })
         await book.save()
 
         res.status(201)
@@ -33,8 +33,8 @@ const createBook = async (req, res, next) => {
 const updateBook = async (req, res, next) => {
     try {
         const { id } = req.params
-        const { title, description, authorId } = req.body
-        const book = await Books.findByIdAndUpdate(id, { title, description, authorId }, { new: true })
+        const { title, description, authorId, price, stock, available } = req.body
+        const book = await Books.findByIdAndUpdate(id, { title, description, authorId, price, stock, available }, { new: true })
 
         res.status(201)
         res.json(book)

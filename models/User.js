@@ -19,7 +19,7 @@ const userSchema = new Schema({
     ⚠️ Puede crecer en tamaño si el usuario sube muchos libros.
     */
     uploadedBooks: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Book"
     }]
 })

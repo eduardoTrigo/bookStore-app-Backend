@@ -1,0 +1,25 @@
+### BUSCA / TRAE todos los autores - GET - OK 
+GET http://localhost:8080/authors
+
+### BUSCA / TRAE todos los autor por ID - GET - OK
+GET http://localhost:8080/authors/683f351ac8be75cc1a49dc1b
+
+### CREA UN AUTOR - POST - OK
+POST http://localhost:8080/authors/
+Content-Type: application/json
+
+{
+    "firstName": "Julio cesar",
+    "lastName": "Cortázar"
+}
+
+### ACTIALIZAR DATOS UN AUTOR - POST - OK
+PATCH  http://localhost:8080/authors/683f85e83f1b466e977838be
+Content-Type: application/json
+
+{
+    "firstName": "Julio "
+}
+
+### ELIMINA UN AUTOR - DELETE - OK
+DELETE http://localhost:8080/authors/683f85e83f1b466e977838be

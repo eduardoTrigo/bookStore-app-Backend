@@ -8,6 +8,9 @@ const authorSchema = new Schema({
     toObject:{virtuals: true}
 })
 
+
+// 👉 Índice compuesto único
+authorSchema.index({ firstName: 1, lastName: 1 }, { unique: true })
 /**
 
 🔍 Relación virtual con los libros escritos por el autor.
