@@ -9,8 +9,8 @@ const getAuthors = async (req, res, next )=>{
         } else {
             query = Author.find({})
         }
-
         const response = await query.exec()
+        if(!response) return res.status(404).json({message: "Author not found"})
         res.status(200)
         res.json(response)
     } catch (error) {
