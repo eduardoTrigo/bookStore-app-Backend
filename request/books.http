@@ -2,16 +2,19 @@
 GET  http://localhost:8080/books
 
 ### BUSCAR / TRAER un libro por ID - GET - OK
-GET  http://localhost:8080/books/
+GET  http://localhost:8080/books/683f9398831a6949692f00ec
+
+### BUSCAR / TRAER un libro por ID - GET - NULL
+GET  http://localhost:8080/books/683f9398831a6949692f00ec
 
 ### CREAR un libro - POST - OK
 POST http://localhost:8080/books
 Content-Type: application/json
 
 {
-    "title": "Ficciones",
-    "description": "Colección de cuentos filosóficos y fantásticos",
-    "authorId":"683f3465c8be75cc1a49dc16"
+    "title": "Bestiario",
+    "description": "Relatos cortos cargados de simbolismo",
+    "authorId":"683f347ec8be75cc1a49dc18"
 }
 
 ### ACTUALIZAR datos de Libros - PATCH - OK
@@ -24,4 +27,4 @@ Content-Type: application/json
 }
 
 ### ELIMINAR un Libro por ID - DELETE - OK
-DELETE http://localhost:8080/books
+DELETE http://localhost:8080/books/684075fa3ff3ada76bf03c09
