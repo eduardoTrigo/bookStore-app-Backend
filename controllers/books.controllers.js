@@ -10,6 +10,7 @@ const getBooks = async (req, res, next) => {
             query = Books.find({})
         }
         const response = await query.exec()
+        if(!response) return res.status(404).json({message: "Book not found"})
         res.status(200)
         res.json(response)
     } catch (error) {
@@ -35,6 +36,7 @@ const updateBook = async (req, res, next) => {
         const { id } = req.params
         const { title, description, authorId, price, stock, available } = req.body
         const book = await Books.findByIdAndUpdate(id, { title, description, authorId, price, stock, available }, { new: true })
+        if (!book) return res.status(404).json({message: " book not found"})
 
         res.status(201)
         res.json(book)
@@ -47,6 +49,8 @@ const deleteBook = async (req, res, next) => {
     try {
         const { id } = req.params
         const book = await Books.findByIdAndDelete(id)
+        if (!book) return res.status(404).json({message: " book not found"})
+
         res.status(201)
         res.json(book)
     } catch (error) {
