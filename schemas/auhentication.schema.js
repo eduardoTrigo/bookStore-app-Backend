@@ -1,7 +1,7 @@
 const { z } = require("zod");
 
 const registerSchema = z.object({
-    username: z.string({
+    userName: z.string({
         required_error: "Username is required"
         }),
     email: z.string({
@@ -32,3 +32,8 @@ const loginSchema = z.object({
         message: "Password must be at least 6 characters"
         })
 })
+
+module.exports = {
+    registerSchema,
+    loginSchema
+}

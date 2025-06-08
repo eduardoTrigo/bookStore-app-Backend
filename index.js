@@ -7,9 +7,11 @@ const bookRouter = require('./routes/book.routes')
 const userRouter = require('./routes/user.router')
 const { errorMiddleware }= require('./middlewares/common.middleware')
 const authenticationRouter = require('./routes/authentication.router')
+const cookieParser = require('cookie-parser')
 
 const app = express()
 
+app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('dev'))
 

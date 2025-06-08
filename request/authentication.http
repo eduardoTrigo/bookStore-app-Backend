@@ -1,0 +1,24 @@
+### REGISTER Create User - Post - ok
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+    "userName": "pituTrigo",
+    "email": "eduatrigo@gmail.com",
+    "password": "010785"
+}
+
+### LOGIN - POST - OK
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+    "email": "eduatrigo@gmail.com",
+    "password": "010785"
+}
+
+### LOGOUT - POST - OK
+POST http://localhost:8080/auth/logout
+
+### get my Profile
+GET http://localhost:8080/auth/myProfile
