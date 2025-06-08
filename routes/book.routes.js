@@ -1,6 +1,5 @@
 const { getBooks, createBook, updateBook, deleteBook } = require('../controllers/books.controllers')
 const { validateMongoId } = require('../middlewares/common.middleware')
-// const {errorMiddleware} = require('../middlewares/common.middleware')
 const validateSchema = require('../middlewares/validator.middleware')
 const {validateDataBook, updateBookSchema} = require('../schemas/book.schema')
 

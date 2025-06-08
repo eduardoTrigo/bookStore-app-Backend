@@ -10,7 +10,12 @@ const EXPRESS_CONFIG = {
     PORT: process.env.PORT
 }
 
+const JWT_CONFIG = {
+    TOKEN_SECRET: process.env.TOKEN
+}
+
 module.exports = {
     MONGO_CONFIG,
-    EXPRESS_CONFIG
+    EXPRESS_CONFIG,
+    JWT_CONFIG
 }

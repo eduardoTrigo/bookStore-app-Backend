@@ -6,15 +6,19 @@ const authorRouter = require('./routes/author.routes')
 const bookRouter = require('./routes/book.routes')
 const userRouter = require('./routes/user.router')
 const { errorMiddleware }= require('./middlewares/common.middleware')
+const authenticationRouter = require('./routes/authentication.router')
+const cookieParser = require('cookie-parser')
 
 const app = express()
 
+app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('dev'))
 
 app.use('/authors', authorRouter)
 app.use('/books', bookRouter)
 app.use('/users', userRouter)
+app.use('/auth', authenticationRouter)
 
 app.use(errorMiddleware)
 
