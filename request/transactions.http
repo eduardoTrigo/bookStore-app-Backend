@@ -1,0 +1,24 @@
+### CREATE ORDER - POST - OK
+POST http://localhost:8080/transactions/order
+Content-Type: application/json
+
+{
+    "bookId": "683f9765ce3ede16bb958ab7",
+    "quantity": 1
+}
+
+### ADD PRODUCT
+POST http://localhost:8080/transactions/order
+Content-Type: application/json
+
+{
+    "bookId": "683f94c9831a6949692f00ee",
+    "quantity": 4
+}
+
+### BUSCAR ORDEN ACTIVA - GET
+GET http://localhost:8080/transactions/myOrder
+
+### EJECUTAR LA COMPRA - POST
+PATCH  http://localhost:8080/transactions/buyOrder
+Content-Type: application/json

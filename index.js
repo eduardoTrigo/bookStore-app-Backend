@@ -8,6 +8,7 @@ const userRouter = require('./routes/user.router')
 const { errorMiddleware }= require('./middlewares/common.middleware')
 const authenticationRouter = require('./routes/authentication.router')
 const cookieParser = require('cookie-parser')
+const transactionsRouter = require('./routes/transaction.routes')
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use('/authors', authorRouter)
 app.use('/books', bookRouter)
 app.use('/users', userRouter)
 app.use('/auth', authenticationRouter)
+app.use('/transactions', transactionsRouter)
 
 app.use(errorMiddleware)
 
