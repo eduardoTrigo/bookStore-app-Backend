@@ -1,6 +1,33 @@
 const { default: mongoose } = require("mongoose")
 const { Order } = require("../models/Order")
 
+const getOrder = async (req, res, next) => {
+    const userId = req.user.id
+    try {
+        const order =await Order.find({user: userId})
+        if (!order) return res.status(404).json({ message: "Order active not found" })
+
+        res.status(200)
+        res.json(order)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getNewstedOrder = async (req, res, next) => {
+    try {
+        const userId = req.user.id
+        const order = await Order.findOne({ user: userId, status: 'active' }).populate('products.book')
+
+        if (!order) return res.status(404).json({ message: "Order active not found" })
+
+        res.status(200)
+        res.json(order)
+    } catch (error) {
+        next(error)
+    }
+}
+
 const addProductToOrder = async (req, res, next) => {
     const { bookId, quantity } = req.body
     const userId = req.user.id
@@ -21,65 +48,81 @@ const addProductToOrder = async (req, res, next) => {
                 order.products.push({ book: bookId, quantity })
             }
         }
-        await order.save()
+        await order.populate('products.book')
 
-        order.populate('products.book')
+        order.total = order.products.reduce((sum, item)=>{
+            return sum + (item.book.price * item.quantity)
+        },0)
+
+        await order.save()
 
         res.status(201).json(order)
     } catch (error) {
         next(error)
     }
-
 }
 
-const getNewstedOrder = async (req, res, next) => {
+const deleteProductByOrder = async(req, res, next) => {
+    const userId = req.user.id
+    const { bookId } = req.body
+
     try {
-        const userId = req.user.id
-        const order = await Order.find({ user: userId, status: 'active' }).populate('products.book')
+        const order = await Order.findOne({user: userId, status:'active'}).populate('products.book')
+        if ( !order ) return res.status(404).json({message: "order not found"})
+        
+        const productInOrder = order.products.length
 
-        if (!order) return res.status(404).json({ message: "Order active not found" })
+        order.products = order.products.filter(item => item.book._id.toString() !== bookId)
 
-        res.status(200)
-        res.json(order)
+        if (order.products == productInOrder) {
+            return res.status(404).json({message: "el producto no se encuemtra en el carrito"})
+        }
+
+        order.total = order.products.reduce((sum, item) => {
+            return sum + (item.book.price * item.quantity)
+        },0)
+
+        await order.save()
+        res.status(201).json({message: "producto eliminado correctamente"},order)
     } catch (error) {
         next(error)
     }
 }
 
-const buyOrder = async( req, res, next)=>{
+const buyOrder = async (req, res, next) => {
     const session = await mongoose.startSession()
     session.startTransaction()
 
     try {
         const userId = req.user.id
-    const order = Order.findOne({User: userId, status: 'active' })
-        .populate('products.book')
-        .session(session)
-    
-    if (!order) {
-        throw new Error(`no hay orden activa de este usuario ID ${userId}`) 
-    }
+        const order = await Order.findOne({ user: userId, status: 'active' })
+            .populate('products.book')
+            .session(session)
 
-    for (const item of order.products ) {
-        const book = item.book
-        const quantityPurchased = item.quantity
-
-        if (book.stock < quantityPurchased) {
-            throw new Error (`No hay suficiente stock para ${book.name}`)
+        if (!order) {
+            throw new Error(`no hay orden activa de este usuario ID ${userId}`)
         }
 
-        book.stock -= quantityPurchased
-        await book.save()
-    }
+        for (const item of order.products) {
+            const book = item.book
+            const quantityPurchased = item.quantity
 
-    order.status = 'completed'
-    await order.save()
+            if (book.stock < quantityPurchased) {
+                throw new Error(`No hay suficiente stock para ${book.name}`)
+            }
 
-    await session.commitTransaction()
-    session.endSession()
+            book.stock -= quantityPurchased
+            await book.save()
+        }
 
-    res.status(201)
-    res.json({message: "compra realizada con exito"})
+        order.status = 'completed'
+        await order.save()
+
+        await session.commitTransaction()
+        session.endSession()
+
+        res.status(201)
+        res.json({ message: "compra realizada con exito" })
     } catch (error) {
         await session.abortTransaction()
         session.endSession()
@@ -87,4 +130,10 @@ const buyOrder = async( req, res, next)=>{
     }
 }
 
-module.exports = { addProductToOrder, getNewstedOrder, buyOrder }
+module.exports = { 
+    getOrder,
+    getNewstedOrder,
+    addProductToOrder,
+    deleteProductByOrder,
+    buyOrder
+}

@@ -9,25 +9,31 @@ const itemsOrderSchema = new Schema({
     quantity: {
         type: Number,
         default: 1,
-        min: 1
+        min: 1,
+        max: 100
     }
 })
 
 const orderSchema = new Schema({
     products: {
-        type: [{itemsOrderSchema}],
+        type: [itemsOrderSchema],
     },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
-        unique: true
     },
     status: {
         type: String,
         enum: ["active", "completed", "cancelled", "expired"],
         default: "active"
+    },
+    total: {
+        type: Number,
+        default: 0,
+        min: 0
     }
+},{
+    timestamps: true
 })
 
 const Order = model('Order', orderSchema)

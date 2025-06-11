@@ -18,13 +18,12 @@ Content-Type: application/json
 }
 
 ### ACTUALIZAR datos de Libros - PATCH - OK
-PATCH http://localhost:8080/books/683f9398831a6949692f00ec
+PATCH http://localhost:8080/books/683f9765ce3ede16bb958ab7
 Content-Type: application/json
 
 {
-    "title":"",
-    "price": 150,
-    "stock": 200
+    "price": 125,
+    "stock": 37
 }
 
 ### ELIMINAR un Libro por ID - DELETE - OK

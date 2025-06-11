@@ -1,10 +1,16 @@
+### TRAER TODAS LAS ORDENES - GET - OK
+GET http://localhost:8080/transactions/orders
+
+### BUSCAR ORDEN ACTIVA - GET - OK
+GET http://localhost:8080/transactions/myOrder
+
 ### CREATE ORDER - POST - OK
 POST http://localhost:8080/transactions/order
 Content-Type: application/json
 
 {
-    "bookId": "683f9765ce3ede16bb958ab7",
-    "quantity": 1
+    "bookId": "683f94c9831a6949692f00ee",
+    "quantity": 3
 }
 
 ### ADD PRODUCT
@@ -16,9 +22,16 @@ Content-Type: application/json
     "quantity": 4
 }
 
-### BUSCAR ORDEN ACTIVA - GET
-GET http://localhost:8080/transactions/myOrder
+DELETE http://localhost:8080/transactions/order
+Content-Type: application/json
+
+{
+    "bookId": "683f94c9831a6949692f00ee"
+}
 
 ### EJECUTAR LA COMPRA - POST
-PATCH  http://localhost:8080/transactions/buyOrder
+PATCH http://localhost:8080/transactions/buyOrder
 Content-Type: application/json
+
+{   
+}
