@@ -10,6 +10,7 @@ const errorMiddleware = (err, req, res, next) => {
     return res.status(400).json({ error: `${field} already exists` })
   }
 
+  console.log(err)
   // Otro tipo de error
   return res.status(500).json({
     error: 'Internal server error',

@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const itemsCartSchema = new Schema({
+const itemsOrderSchema = new Schema({
     book: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -9,27 +9,33 @@ const itemsCartSchema = new Schema({
     quantity: {
         type: Number,
         default: 1,
-        min: 1
+        min: 1,
+        max: 100
     }
 })
 
-const cartSchema = new Schema({
+const orderSchema = new Schema({
     products: {
-        type: [itemsCartSchema],
+        type: [itemsOrderSchema],
     },
-    User: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
-        unique: true
     },
     status: {
         type: String,
         enum: ["active", "completed", "cancelled", "expired"],
         default: "active"
+    },
+    total: {
+        type: Number,
+        default: 0,
+        min: 0
     }
+},{
+    timestamps: true
 })
 
-const Cart = model('Cart', cartSchema)
+const Order = model('Order', orderSchema)
 
-module.exports = { Cart }
+module.exports = { Order }

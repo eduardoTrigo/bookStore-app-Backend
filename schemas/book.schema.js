@@ -17,14 +17,17 @@ const validateDataBook = z.object({
 })
 
 const updateBookSchema = z
-.object({
-    title: z.string().min(1, 'title is required').optional(),
-    description: z.string().min(1, 'description is required').optional(),
-    authorId: z.string().length(24, 'Invalid authorId').optional()
-})
-.refine((data)=> Object.keys(data).length > 0,{
-    message: 'At least one field must be provided for update',
-})
+    .object({
+        title: z.string().min(1, 'title is required').optional(),
+        description: z.string().min(1, 'description is required').optional(),
+        authorId: z.string().length(24, 'Invalid authorId').optional(),
+        price: z.number().min(0, 'price must be positive').optional(),
+        stock: z.number().int().min(0, 'stock must be positive').optional(),
+        available: z.boolean().optional()
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+        message: 'At least one field must be provided for update',
+    })
 
 
-module.exports = { validateDataBook , updateBookSchema }
+module.exports = { validateDataBook, updateBookSchema }
