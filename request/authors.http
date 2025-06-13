@@ -2,7 +2,7 @@
 GET http://localhost:8080/authors
 
 ### BUSCA / TRAE todos los autor por ID - GET - OK
-GET http://localhost:8080/authors/683f351ac8be75cc1a49dc1b
+GET http://localhost:8080/authors/683f33fb8203a155dbe6ee72
 
 ### CREA UN AUTOR - POST - OK
 POST http://localhost:8080/authors/

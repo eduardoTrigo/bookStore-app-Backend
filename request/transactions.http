@@ -22,6 +22,7 @@ Content-Type: application/json
     "quantity": 4
 }
 
+### ELIMINAR UN PRODUCTO DEL CARRITO - DELETE - OK
 DELETE http://localhost:8080/transactions/order
 Content-Type: application/json
 

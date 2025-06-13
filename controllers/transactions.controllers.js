@@ -1,14 +1,14 @@
 const { default: mongoose } = require("mongoose")
 const { Order } = require("../models/Order")
+const { errorResponse, successResponse } = require("../utils/response")
 
 const getOrder = async (req, res, next) => {
     const userId = req.user.id
     try {
-        const order =await Order.find({user: userId})
-        if (!order) return res.status(404).json({ message: "Order active not found" })
+        const order = await Order.find({ user: userId })
+        if (!order) return errorResponse(res, "Orden Activa No Encontrada", 404)
 
-        res.status(200)
-        res.json(order)
+        return successResponse(res, order, 'Ordenes obtenidas correctamente')
     } catch (error) {
         next(error)
     }
@@ -19,10 +19,9 @@ const getNewstedOrder = async (req, res, next) => {
         const userId = req.user.id
         const order = await Order.findOne({ user: userId, status: 'active' }).populate('products.book')
 
-        if (!order) return res.status(404).json({ message: "Order active not found" })
+        if (!order) return errorResponse(res, "Orden Activa No Encontrada", 404)
 
-        res.status(200)
-        res.json(order)
+        return successResponse(res, order, 'Orden activa obtenida correctamente')
     } catch (error) {
         next(error)
     }
@@ -50,40 +49,40 @@ const addProductToOrder = async (req, res, next) => {
         }
         await order.populate('products.book')
 
-        order.total = order.products.reduce((sum, item)=>{
+        order.total = order.products.reduce((sum, item) => {
             return sum + (item.book.price * item.quantity)
-        },0)
+        }, 0)
 
         await order.save()
 
-        res.status(201).json(order)
+        return successResponse(res, order, 'Producto agregado al carrito', 201)
     } catch (error) {
         next(error)
     }
 }
 
-const deleteProductByOrder = async(req, res, next) => {
+const deleteProductByOrder = async (req, res, next) => {
     const userId = req.user.id
     const { bookId } = req.body
 
     try {
-        const order = await Order.findOne({user: userId, status:'active'}).populate('products.book')
-        if ( !order ) return res.status(404).json({message: "order not found"})
-        
+        const order = await Order.findOne({ user: userId, status: 'active' }).populate('products.book')
+        if (!order) return errorResponse(res, "Orden No Encontrada", 404)
+
         const productInOrder = order.products.length
 
         order.products = order.products.filter(item => item.book._id.toString() !== bookId)
 
         if (order.products == productInOrder) {
-            return res.status(404).json({message: "el producto no se encuemtra en el carrito"})
+            return errorResponse(res, "El producto no se encuentra en el carrito", 404)
         }
 
         order.total = order.products.reduce((sum, item) => {
             return sum + (item.book.price * item.quantity)
-        },0)
+        }, 0)
 
         await order.save()
-        res.status(201).json({message: "producto eliminado correctamente"},order)
+        return successResponse(res, order, 'Producto eliminado correctamente', 200)
     } catch (error) {
         next(error)
     }
@@ -121,8 +120,7 @@ const buyOrder = async (req, res, next) => {
         await session.commitTransaction()
         session.endSession()
 
-        res.status(201)
-        res.json({ message: "compra realizada con exito" })
+        return successResponse(res, order, 'Compra realizada con éxito', 201)
     } catch (error) {
         await session.abortTransaction()
         session.endSession()
@@ -130,7 +128,7 @@ const buyOrder = async (req, res, next) => {
     }
 }
 
-module.exports = { 
+module.exports = {
     getOrder,
     getNewstedOrder,
     addProductToOrder,

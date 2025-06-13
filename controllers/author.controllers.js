@@ -1,4 +1,5 @@
 const Author = require("../models/Author")
+const { errorResponse, successResponse } = require("../utils/response")
 
 const getAuthors = async (req, res, next )=>{
     try {
@@ -10,9 +11,9 @@ const getAuthors = async (req, res, next )=>{
             query = Author.find({})
         }
         const response = await query.exec()
-        if(!response) return res.status(404).json({message: "Author not found"})
-        res.status(200)
-        res.json(response)
+        if(!response) return errorResponse(res, "Author not found", 404)
+        
+        return successResponse(res,response,id ? "Autor Obtenido": "Listado de Autores",200)
     } catch (error) {
         next(error)
     }
@@ -23,8 +24,7 @@ const createAuthor = async (req, res, next) => {
         const {firstName, lastName} = req.body
         const author = new Author({ firstName, lastName})
         await author.save()
-        res.status(201)
-        res.json(author)
+        return successResponse(res, author , "autor creado correctamente ",201)
     } catch (error) {
         next(error)
     }
@@ -34,9 +34,9 @@ const deleteAuthor = async (req, res, next) => {
     try {
         const {id} = req.params
         const author = await Author.findByIdAndDelete(id)
-        if (!author) return res.status(404).json({message: "autor inexistente"})
-        res.status(201)
-        res.json(author)    
+        if (!author) return errorResponse(res, "autor inexistente", 404)
+        
+        return successResponse(res, author, "autor inexistente")
     } catch (error) {
         next(error)
     }
@@ -47,9 +47,8 @@ const updateAuthor = async (req, res, next)=>{
         const {id}= req.params
         const {firstName, lastName}= req.body
         const author = await Author.findByIdAndUpdate(id,{firstName, lastName},{new: true})
-        if (!author) return res.status(404).json({ message: "Author not found" })
-        res.status(201)
-        res.json(author)
+        if (!author) return errorResponse(res, "Author not found", 404)
+        return successResponse(res, author, "Informacion de Autor actualizada correctamente")
     } catch (error) {
         next(error)
     }
