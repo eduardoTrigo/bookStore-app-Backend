@@ -1,4 +1,5 @@
 const { User } = require("../models/User")
+const { successResponse, errorResponse } = require("../utils/response")
 
 const getUser = async (req, res, next)=>{
     try {
@@ -10,8 +11,7 @@ const getUser = async (req, res, next)=>{
             query = User.find({})
         }
         const response = await query.exec()
-        res.status(200)
-        res.json(response)
+        return successResponse(res,response,id ? "Usuario Obtenido": "Listado de usuarios")
     } catch (error) {
         next(error)
     }
@@ -22,8 +22,7 @@ const createUser = async( req, res, next)=>{
         const {userName , email, password, role} = req.body
         const user = new User({userName, email, password, role})
         await user.save()
-        res.status(201)
-        res.json(user)
+        return successResponse(res, user, "Usuario Creado Correctamente",201)
     } catch (error) {
         next(error)
     }
@@ -34,10 +33,9 @@ const updateUser = async( req, res, next)=>{
         const { id } = req.params
         const {userName, email, password, role} = req.body
         const user = await User.findByIdAndUpdate(id, { userName, email, password, role},{new: true})
-        if(!user) return res.status(404).json('user not found')
+        if(!user) return errorResponse(res,"user not found",404)
         
-        res.status(201)
-        res.json(user)
+        return successResponse(res,user, "Usuario Actualizado Correctamente")
     } catch (error) {
         next(error)
     }
@@ -47,9 +45,8 @@ const deleteUser = async (req, res, next)=>{
     try {
         const { id } = req.params
         const user = await User.findByIdAndDelete(id)
-        if(!user) return res.status(404).json('user not found')
-        res.status(201)
-        res.json(user)
+        if(!user) return errorResponse(res,"user not found",404)
+        return successResponse(res, user, "Usuario eliminado correctamente")
     } catch (error) {
         next(error)
     }
