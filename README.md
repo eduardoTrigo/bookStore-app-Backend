@@ -1,145 +1,200 @@
-# 📚 API de Librería
+# 📚 BookStore App - Backend
 
-API RESTful construida con Node.js, Express y MongoDB (Mongoose), para la gestión de libros, autores, usuarios y órdenes de compra.
-
----
-
-## 🚀 Tecnologías
-
-- Node.js
-- Express
-- MongoDB + Mongoose
-- Zod (validación de datos)
-- JWT (autenticación)
-- Bcrypt (hash de contraseñas)
-- dotenv (configuración por entorno)
+Backend de una aplicación de gestión de una librería online. Esta API permite a los usuarios registrarse, loguearse, consultar libros, autores, realizar pedidos, comprar y administrar sus datos. Incluye un sistema de autenticación con JWT, validaciones exhaustivas con Zod, manejo de errores centralizado y operaciones de compra protegidas mediante transacciones de MongoDB.
 
 ---
 
-## 📂 Estructura del proyecto
+## 🚀 Tecnologías Utilizadas
 
-```
-.
-├── config/              # Configuración general y variables de entorno (incluye index.js)
-├── controllers/         # Controladores con la lógica de negocio (libros, usuarios, órdenes)
-├── libs/                # Librerías como JWT, helpers reutilizables
-├── middlewares/         # Middleware de autenticación, validación, etc.
-├── models/              # Modelos de datos Mongoose
-├── request/             # Módulo de cliente HTTP: consultas REST a servicios externos
-├── routes/              # Definición de las rutas de la API
-├── schemas/             # Validaciones de esquemas con Zod 
-├── index.js             # Configuración general del servidor y punto de entrada principal de la aplicación
-└── .env                 # Variables de entorno
-
-```
+* **Node.js** + **Express.js**
+* **MongoDB** + **Mongoose**
+* **Zod** (validaciones de datos)
+* **JWT** para autenticación
+* **bcrypt** para hasheo de contraseñas
+* **cookie-parser** para manejo seguro de sesiones
+* **Morgan** para logging de requests
+* **dotenv** para manejo de variables de entorno
+* **Swagger** (opcional) para documentación interactiva de la API
 
 ---
 
-## 📦 Instalación
-
-```bash
-git clone https://github.com/eduardoTrigo/bookStore-app-Backend
-cd api-libreria
-npm install
-```
-
-Crea un archivo `.env` con las siguientes variables:
+## 📁 Estructura del Proyecto
 
 ```
-MONGO_URI=mongodb://localhost:27017/libreria
-JWT_SECRET=clave-secreta
-PORT=3000
+bookstore-app-backend/
+│
+├── config/                 # Configuración de entorno
+├── controllers/            # Lógica de negocio por entidad
+├── middlewares/           # Middlewares de validación y errores
+├── models/                # Modelos de MongoDB
+├── routes/                # Endpoints agrupados por recurso
+├── schemas/               # Validaciones con Zod
+├── utils/                 # Funciones auxiliares
+├── libs/                  # Librería JWT personalizada
+├── index.js               # Punto de entrada de la aplicación
+├── .env                   # Variables de entorno
+└── package.json
 ```
 
 ---
 
-## 🧪 Rutas principales
+## ⚙️ Características Técnicas Destacadas
 
-### 📚 Libros
+* ✅ **CRUD completo** de libros, autores y usuarios
+* 🔒 **Autenticación segura** usando JWT + Cookies HttpOnly
+* 🧠 **Validaciones robustas** con Zod en cada endpoint
+* 🧱 **Middleware personalizados**:
 
-- `GET /books` → Listado de libros
-- `GET /books/:id` → Obtener libro por ID
-- `POST /books` → Crear libro
-- `PUT /books/:id` → Actualizar libro
-- `DELETE /books/:id` → Eliminar libro
+  * Validación de ObjectId de MongoDB
+  * Verificación de token (authRequired, isGuest)
+* 🔁 **Transacciones con sesiones MongoDB** al realizar compras:
 
-### 👤 Usuarios
-
-- `GET /users` → Listado de usuarios
-- `POST /users` → Registro de usuario
-- `PUT /users/:id` → Actualizar usuario
-- `DELETE /users/:id` → Eliminar usuario
-
-### ✍ Autores
-
-- `GET /authors` → Listado de autores
-- `POST /authors` → Crear autor
-- `PUT /authors/:id` → Actualizar autor
-- `DELETE /authors/:id` → Eliminar autor
-
-### 🛒 Órdenes
-
-- `GET /orders` → Historial del usuario autenticado
-- `GET /orders/active` → Orden activa (carrito)
-- `POST /orders` → Agregar producto al carrito
-- `DELETE /orders` → Eliminar producto del carrito
-- `POST /orders/checkout` → Finalizar compra
-
-### 🔐 Autenticación
-
-- `POST /auth/register` → Registro
-- `POST /auth/login` → Login
+  * Aseguran consistencia en el stock
+  * Cancelan si no hay stock suficiente
+* 📦 **Carrito persistente** para pedidos activos por usuario
+* 🧨 **Manejo centralizado de errores**
+* 📚 **Populate()** para obtener información anidada (libros en pedidos, autores de libros)
 
 ---
 
-## 🔎 Validación con Zod
+## 🔐 Autenticación
 
-Todas las entradas se validan usando `Zod`, con errores claros y estructurados.
+Se utiliza JWT almacenado en cookies seguras (`HttpOnly`) para mantener la sesión.
 
-Ejemplo:
+* `POST /auth/register`: Registro de nuevos usuarios
+* `POST /auth/login`: Login del usuario y emisión de token
+* `POST /auth/logout`: Cierre de sesión
+* `GET /auth/myProfile`: Retorna los datos del usuario autenticado
+
+---
+
+## 🛒 Gestión de Pedidos (Carrito)
+
+* `GET /transactions/myOrder`: Obtener el carrito activo del usuario
+* `POST /transactions/order`: Agregar un libro al carrito
+* `DELETE /transactions/order`: Eliminar un libro del carrito
+* `PATCH /transactions/buyOrder`: Comprar el carrito
+* `GET /transactions/orders`: Ver historial de pedidos del usuario
+
+🧾 La compra usa una transacción MongoDB para:
+
+* Validar stock de libros
+* Actualizar cantidades
+* Finalizar pedido como "completed"
+
+---
+
+## 📚 Libros y Autores
+
+* CRUD completo para:
+
+  * `Books`: `/books`
+  * `Authors`: `/authors`
+  * Incluye relaciones (`populate`) para mostrar los libros de cada autor
+
+---
+
+## 👤 Usuarios (admin o uso interno)
+
+* CRUD disponible en `/users`
+* Solo para propósitos de desarrollo o panel de admin
+
+---
+
+## ✅ Validaciones
+
+Cada recurso tiene su schema Zod correspondiente:
+
+* `registerSchema`, `loginSchema`
+* `validateDataAuthor`, `updateDataAuthor`
+* `validateDataBook`, `updateBookSchema`
+
+Estos esquemas previenen datos incompletos o mal estructurados en el backend.
+
+---
+
+## 🧪 Middleware de Errores
+
+Middleware centralizado que captura:
+
+* Errores de validación (Zod)
+* ObjectId inválidos
+* Claves duplicadas en MongoDB (código 11000)
+
+Ejemplo de error controlado:
 
 ```json
 {
-  "error": [
-    {
-      "path": ["email"],
-      "message": "Invalid email"
-    }
-  ]
+  "success": false,
+  "message": "Email ya existe"
 }
 ```
 
 ---
 
-## ✅ Ejecución del proyecto
+## 📝 Instalación y Ejecución
 
 ```bash
-npm run dev
+# Clonar el repositorio
+$ git clone https://github.com/usuario/bookstore-app-backend.git
+$ cd bookstore-app-backend
+
+# Instalar dependencias
+$ npm install
+
+# Crear archivo .env
+PORT=8080
+MONGO_URI=mongodb+srv://<usuario>:<password>@cluster.mongodb.net/bookstore
+TOKEN=unaClaveSecreta
+
+# Ejecutar la aplicación
+$ npm run dev
 ```
 
-Servidor disponible en: [http://localhost:3000](http://localhost:3000)
+---
+
+## 📘 Documentación Swagger (opcional)
+
+Si agregás `swagger-jsdoc` + `swagger-ui-express`, podés documentar tu API de forma interactiva:
+
+```bash
+npm install swagger-jsdoc swagger-ui-express
+```
+
+Luego agregá esto en `index.js`:
+
+```js
+const swaggerJsdoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+
+const specs = swaggerJsdoc({
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Bookstore API',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./routes/*.js'],
+})
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
+```
 
 ---
 
-## 🛡 Seguridad
+## 🧠 Posibles Mejoras Futuras
 
-- Las contraseñas se almacenan hasheadas con bcrypt
-- Las rutas protegidas requieren token JWT válido
-
----
-
-## 🧠 Recomendaciones de desarrollo
-
-- Usar middlewares de validación con Zod para limpiar los controllers
-- Separar la lógica de negocio en servicios (`services/`)
-- Documentar la API con Swagger o Postman
-- Implementar paginación, búsqueda y ordenamiento en `/books`
-- Agregar roles de usuario (`admin`, `cliente`, etc.)
+* [ ] Agregar roles y permisos para usuarios (admin, user)
+* [ ] Paginación y filtros para listar libros/autores
+* [ ] Emails de confirmación o recuperación de contraseña
+* [ ] Webhooks o integración con plataformas de pago
+* [ ] Tests automatizados con Jest o Supertest
+* [ ] Desplegar en plataformas como Render, Vercel o Railway
+* [ ] Agregar logs persistentes (Winston, LogRocket)
 
 ---
 
-## ✍ Autor
+## 👨‍💻 Autor
 
-Eduardo Trigo
-
----
+Desarrollado por **Eduardo Trigo**. Proyecto educativo con enfoque en buenas prácticas de backend con Node + Mongo.
